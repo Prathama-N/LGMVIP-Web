@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>User Card Grid</title>
+  <style>
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    .navbar {
+      background-color: #333;
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 50px;
+      padding: 0 20px;
+    }
+    
+    .navbar-brand {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .get-users-btn {
+      background-color: #fff;
+      color: #333;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .loader {
+      border: 8px solid #f3f3f3;
+      border-top: 8px solid #3498db;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 2s linear infinite;
+      margin: 20px auto;
+      display: none;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .user-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-gap: 20px;
+      margin: 20px;
+    }
+    
+    .user-card {
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 20px;
+    }
+    
+
+    .user-card img {
+      display: block;
+      width: 100%;
+      margin-bottom: 10px;
+      border-radius: 50%;
+    }
+    
+    .user-card h2 {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    
+    .user-card p {
+      font-size: 14px;
+      color: #999;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-brand">User grid Sample</div>
+    <div class="navbar-links">
+      <button class="get-users-btn">Get Users</button>
+    </div>
+  </nav>
+  
+  <div class="loader"></div>
+  
+  <div class="user-grid"></div>
+
+  <script>
+    const getUsersBtn = document.querySelector('.get-users-btn');
+const userGrid = document.querySelector('.user-grid');
+const loader = document.querySelector('.loader');
+
+function showLoader() {
+  loader.style.display = 'flex';
+}
+
+function hideLoader() {
+  loader.style.display = 'none';
+}
+
+function renderUserCards(users) {
+  userGrid.innerHTML = '';
+  users.forEach(user => {
+    const userCard = `
+      <div class="user-card">
+        <img src="${user.avatar}" alt="${user.first_name} ${user.last_name}">
+        <h2>${user.first_name} ${user.last_name}</h2>
+        <p>${user.email}</p>
+      </div>
+    `;
+    userGrid.insertAdjacentHTML('beforeend', userCard);
+  });
+}
+
+async function fetchUsers() {
+  try {
+    showLoader();
+    const response = await fetch('https://reqres.in/api/users?page=1');
+    const { data: users } = await response.json();
+    renderUserCards(users);
+    hideLoader();
+  } catch (error) {
+    console.error(error);
+    hideLoader();
+  }
+}
+
+getUsersBtn.addEventListener('click', fetchUsers);
+
+
+  </script>
+</body>
+</html>
